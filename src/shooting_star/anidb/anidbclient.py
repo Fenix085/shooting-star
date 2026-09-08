@@ -1,6 +1,8 @@
 import os
 from dotenv import load_dotenv
 import socket
+import hashlib
+from Crypto.Cipher import AES
 
 from .ratelimiter import RateLimiter
 
@@ -10,6 +12,7 @@ class AniDBClient():
     def __init__(self) -> None:
         self.host = os.getenv("ANIDB_HOST", "api.anidb.net")
         self.port = int(os.getenv("ANIDB_PORT", 9000))
+        self.api_key = os.getenv("ANIDB_API_KEY")
         self.local_port = int(os.getenv("ANIDB_LOCAL_PORT", 4421))
         self.client = os.getenv("ANIDB_CLIENT")
         self.client_ver = os.getenv("ANIDB_CLIENT_VER")
@@ -17,23 +20,40 @@ class AniDBClient():
         self.password = os.getenv("ANIDB_PASSWORD")
 
         self.limiter = RateLimiter()
-
+        self._cipher = None
         self.session = None
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.settimeout(10)
         self.sock.bind(("0.0.0.0", self.local_port))
 
+    def _pad(self, data: bytes) -> bytes:
+        pad_len = 16 - (len(data) % 16)
+        return data + bytes(pad_len)
+
     def _send(self, command: str) -> str:
         self.limiter.wait()
-        self.sock.sendto(command.encode(), (self.host, self.port))
-        data, _ = self.sock.recvfrom(1400)
-        return data.decode()
+        data = command.encode()
+        if self._cipher:
+            data = self._cipher.encrypt(self._pad(data))
+        self.sock.sendto(data, (self.host, self.port))
+        raw, _ = self.sock.recvfrom(1400)
+        if self._cipher:
+            raw = raw.rstrip(b'\x00')
+            if len(raw) % AES.block_size:
+                if len(raw) >= 3 and raw[:3].isdigit():
+                    return raw.decode()
+                raise RuntimeError(
+                    f"Encrypted AniDB response is not block-aligned: {len(raw)} bytes"
+                )
+            raw = self._cipher.decrypt(raw).rstrip(b'\x00')
+        return raw.decode()
 
     def ping(self) -> bool:
         response = self._send("PING")
         return True if response.startswith("300") else False
 
     def auth(self) -> str:
+            
         cmd = (f"AUTH user={self.username}&pass={self.password}&protover=3&client={self.client}&clientver={self.client_ver}&enc=UTF-8")
 
         response = self._send(cmd)
@@ -70,6 +90,37 @@ class AniDBClient():
         sep = "&" if " " in cmd else " "
         return self._send(f"{cmd}{sep}s={self.session}")
 
+    def encrypt(self) -> None:
+        if not self.api_key:
+            raise Exception("ANIDB_API_KEY is not set in .env file")
+
+        response = self._send(f"ENCRYPT user={self.username}&type=1")
+        code = response[:3]
+
+        if code == "209":
+            salt = response.split(" ")[1]
+            key = hashlib.md5((self.api_key + salt).encode()).digest()
+            self._cipher = AES.new(key, AES.MODE_ECB)
+        elif code == "309":
+            raise Exception("API PASSWORD NOT DEFINED")
+        elif code == "509":
+            raise Exception("NO SUCH ENCRYPTION TYPE")
+        elif code == "394":
+            raise Exception("NO SUCH USER")
+        else:
+            raise RuntimeError(f"Unexpected ENCRYPT response: {response}")
+
     def close(self):
-        self.logout()
-        self.sock.close()
+        if self.sock.fileno() == -1:
+            return
+
+        try:
+            self.logout()
+        finally:
+            self.sock.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
