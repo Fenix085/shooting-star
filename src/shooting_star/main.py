@@ -1,10 +1,11 @@
 from shooting_star.anidb import AniDBClient
+from shooting_star.anilist import AniListClient
 
 def main():
-    with AniDBClient() as client:
-        client.encrypt()
-        client.auth()
-        print(client.command("MYLIST aid=1"))  
+    anilist = AniListClient(mock=True)
 
+    print(anilist.search("Bebop", 2))
+
+    
 if __name__ == "__main__":
     main()

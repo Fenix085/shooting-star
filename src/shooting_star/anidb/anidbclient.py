@@ -4,7 +4,7 @@ import socket
 import hashlib
 from Crypto.Cipher import AES
 
-from .ratelimiter import RateLimiter
+from ..common.ratelimiter import RateLimiter
 
 load_dotenv()
 
