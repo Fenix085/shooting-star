@@ -1,6 +1,8 @@
 import requests
+from collections import deque
 
 from ..common.ratelimiter import RateLimiter
+from .mockdata import MOCK_RESPONSES
 
 class AniListClient():
     def __init__(self, mock = False) -> None:
@@ -52,20 +54,103 @@ class AniListClient():
 
         return self._request(query, variables)['Page']['media']
 
-    def get_anime(self, id):
-        pass
+    def get_anime(self, aid):
+        query = '''
+        query ($id: Int!) {
+            media(id: $id) {
+                id
+                title {
+                    romaji
+                    english
+                }
+                format
+                status
+                episodes
+                season
+                seasonYear
+                averageScore
+                genres
+                description
+            }
+        }
+        '''
+        variables = {
+            "id": aid
+        } 
 
-    def get_relations(self, id):
-        pass
+        return self._request(query, variables)
 
-    def build_graph(self, id):
-        pass
+    def get_relations(self, aid):
+        if self.mock:
+            resp = MOCK_RESPONSES.get(aid)
+            if resp is None:
+                raise RuntimeError(f"Mock: no data for id {aid}")
+            return resp["data"]
+        
+        query = '''
+        query ($id: Int!) {
+            media(id: $id){
+                id
+                title {
+                    romaji
+                    english
+                }
+                relations {
+                    edges {
+                        relationType
+                        node {
+                            id
+                            title {
+                                romaji
+                                english
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        '''
+
+        variables = {
+            "id": aid,
+        }
+
+        return self._request(query, variables)
+
+    def build_graph(self, aid):
+        graph = {}
+        q = deque([aid])
+        visited = set()
+        while q:
+            current = q.popleft()
+
+            if current in visited:
+                continue
+            visited.add(current)
+
+            data = self.get_relations(current)["media"]
+            edges = []
+            for edge in data["relations"]["edges"]:
+                rel_type = edge["relationType"]
+                neighbor = edge["node"]
+                nid = neighbor["id"]
+
+                edges.append((rel_type, nid))
+
+                if nid not in visited:
+                    q.append(nid)
+
+            graph[current] = {
+                "title": data["title"],
+                "edges": edges,
+            }
+        return graph
 
     def _mock_search(self, name, limit):
-        """API is down, so here we go"""
-        data = [
-            {'id': 1, 'title': {'romaji': 'Cowboy Bebop', 'english': 'Cowboy Bebop'}},
-            {'id': 5, 'title': {'romaji': 'Cowboy Bebop: Tengoku no Tobira', 'english': "Cowboy Bebop: Knockin' on Heaven's Door"}},
-            {'id': 17, 'title': {'romaji': 'Shelter', 'english': 'Shelter'}},
-        ]
-        return [d for d in data if name.lower() in d['title']['romaji'].lower()][:limit]
+        """API is down, so here we go."""
+        return [
+            response["data"]["media"]
+            for response in MOCK_RESPONSES.values()
+            if name.lower()
+            in response["data"]["media"]["title"]["romaji"].lower()
+        ][:limit]
