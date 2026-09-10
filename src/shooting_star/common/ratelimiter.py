@@ -1,6 +1,7 @@
 import time
 
-class RateLimiter():
+
+class RateLimiter:
     def __init__(self, min_interval: float = 2.0) -> None:
         self._min_interval = min_interval
         self._last_request: float = 0.0

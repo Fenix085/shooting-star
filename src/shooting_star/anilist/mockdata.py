@@ -3,10 +3,15 @@ MOCK_RESPONSES = {
         "data": {
             "media": {
                 "id": 9253,
-                "title": {
-                    "romaji": "Steins;Gate",
-                    "english": "Steins;Gate"
-                },
+                "title": {"romaji": "Steins;Gate", "english": "Steins;Gate"},
+                "format": "TV",
+                "episodes": 24,
+                "seasonYear": 2011,
+                "status": "FINISHED",
+                "averageScore": 88,
+                "studios": {"nodes": [{"name": "White Fox"}]},
+                "genres": ["Drama", "Sci-Fi", "Thriller"],
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at tellus tincidunt, dignissim ligula in, feugiat dui. Suspendisse volutpat metus arcu, in placerat ante cursus vel. Mauris vitae purus imperdiet, mollis metus ut, lacinia ante. Sed consectetur tempor velit ac facilisis. Curabitur luctus ex et erat consectetur semper. Aliquam erat volutpat. Etiam pellentesque, enim id dapibus ornare, risus felis sagittis ante, non viverra orci nunc nec nisl. Donec fringilla quam ipsum, eu finibus quam condimentum vel. Phasellus felis justo, sollicitudin ac tempus nec, efficitur quis felis. Quisque a nisi nec turpis porta tincidunt.",
                 "relations": {
                     "edges": [
                         {
@@ -15,9 +20,9 @@ MOCK_RESPONSES = {
                                 "id": 11577,
                                 "title": {
                                     "romaji": "Steins;Gate: Fuka Ryouiki no Déjà vu",
-                                    "english": "Steins;Gate: The Movie - Load Region of Déjà Vu"
-                                }
-                            }
+                                    "english": "Steins;Gate: The Movie - Load Region of Déjà Vu",
+                                },
+                            },
                         },
                         {
                             "relationType": "ALTERNATIVE",
@@ -25,9 +30,9 @@ MOCK_RESPONSES = {
                                 "id": 21127,
                                 "title": {
                                     "romaji": "Steins;Gate 0",
-                                    "english": "Steins;Gate 0"
-                                }
-                            }
+                                    "english": "Steins;Gate 0",
+                                },
+                            },
                         },
                         {
                             "relationType": "SIDE_STORY",
@@ -35,9 +40,9 @@ MOCK_RESPONSES = {
                                 "id": 32188,
                                 "title": {
                                     "romaji": "Steins;Gate: Oukoubakko no Poriomania",
-                                    "english": "Steins;Gate: Egoistic Poriomania"
-                                }
-                            }
+                                    "english": "Steins;Gate: Egoistic Poriomania",
+                                },
+                            },
                         },
                         {
                             "relationType": "SOURCE",
@@ -45,9 +50,9 @@ MOCK_RESPONSES = {
                                 "id": 17517,
                                 "title": {
                                     "romaji": "Steins;Gate",
-                                    "english": "Steins;Gate"
-                                }
-                            }
+                                    "english": "Steins;Gate",
+                                },
+                            },
                         },
                         {
                             "relationType": "OTHER",
@@ -55,24 +60,20 @@ MOCK_RESPONSES = {
                                 "id": 3927,
                                 "title": {
                                     "romaji": "ChäoS;HEAd",
-                                    "english": "Chaos;Head"
-                                }
-                            }
-                        }
+                                    "english": "Chaos;Head",
+                                },
+                            },
+                        },
                     ]
-                }
+                },
             }
         }
     },
-
     21127: {
         "data": {
             "media": {
                 "id": 21127,
-                "title": {
-                    "romaji": "Steins;Gate 0",
-                    "english": "Steins;Gate 0"
-                },
+                "title": {"romaji": "Steins;Gate 0", "english": "Steins;Gate 0"},
                 "relations": {
                     "edges": [
                         {
@@ -81,9 +82,9 @@ MOCK_RESPONSES = {
                                 "id": 9253,
                                 "title": {
                                     "romaji": "Steins;Gate",
-                                    "english": "Steins;Gate"
-                                }
-                            }
+                                    "english": "Steins;Gate",
+                                },
+                            },
                         },
                         {
                             "relationType": "OTHER",
@@ -91,23 +92,22 @@ MOCK_RESPONSES = {
                                 "id": 3927,
                                 "title": {
                                     "romaji": "ChäoS;HEAd",
-                                    "english": "Chaos;Head"
-                                }
-                            }
-                        }
+                                    "english": "Chaos;Head",
+                                },
+                            },
+                        },
                     ]
-                }
+                },
             }
         }
     },
-
     11577: {
         "data": {
             "media": {
                 "id": 11577,
                 "title": {
                     "romaji": "Steins;Gate: Fuka Ryouiki no Déjà vu",
-                    "english": "Steins;Gate: The Movie - Load Region of Déjà Vu"
+                    "english": "Steins;Gate: The Movie - Load Region of Déjà Vu",
                 },
                 "relations": {
                     "edges": [
@@ -117,23 +117,22 @@ MOCK_RESPONSES = {
                                 "id": 9253,
                                 "title": {
                                     "romaji": "Steins;Gate",
-                                    "english": "Steins;Gate"
-                                }
-                            }
+                                    "english": "Steins;Gate",
+                                },
+                            },
                         }
                     ]
-                }
+                },
             }
         }
     },
-
     32188: {
         "data": {
             "media": {
                 "id": 32188,
                 "title": {
                     "romaji": "Steins;Gate: Oukoubakko no Poriomania",
-                    "english": "Steins;Gate: Egoistic Poriomania"
+                    "english": "Steins;Gate: Egoistic Poriomania",
                 },
                 "relations": {
                     "edges": [
@@ -143,24 +142,20 @@ MOCK_RESPONSES = {
                                 "id": 9253,
                                 "title": {
                                     "romaji": "Steins;Gate",
-                                    "english": "Steins;Gate"
-                                }
-                            }
+                                    "english": "Steins;Gate",
+                                },
+                            },
                         }
                     ]
-                }
+                },
             }
         }
     },
-
     17517: {
         "data": {
             "media": {
                 "id": 17517,
-                "title": {
-                    "romaji": "Steins;Gate",
-                    "english": "Steins;Gate"
-                },
+                "title": {"romaji": "Steins;Gate", "english": "Steins;Gate"},
                 "relations": {
                     "edges": [
                         {
@@ -169,24 +164,20 @@ MOCK_RESPONSES = {
                                 "id": 9253,
                                 "title": {
                                     "romaji": "Steins;Gate",
-                                    "english": "Steins;Gate"
-                                }
-                            }
+                                    "english": "Steins;Gate",
+                                },
+                            },
                         }
                     ]
-                }
+                },
             }
         }
     },
-
     3927: {
         "data": {
             "media": {
                 "id": 3927,
-                "title": {
-                    "romaji": "ChäoS;HEAd",
-                    "english": "Chaos;Head"
-                },
+                "title": {"romaji": "ChäoS;HEAd", "english": "Chaos;Head"},
                 "relations": {
                     "edges": [
                         {
@@ -195,9 +186,9 @@ MOCK_RESPONSES = {
                                 "id": 9253,
                                 "title": {
                                     "romaji": "Steins;Gate",
-                                    "english": "Steins;Gate"
-                                }
-                            }
+                                    "english": "Steins;Gate",
+                                },
+                            },
                         },
                         {
                             "relationType": "OTHER",
@@ -205,24 +196,20 @@ MOCK_RESPONSES = {
                                 "id": 13599,
                                 "title": {
                                     "romaji": "Robotics;Notes",
-                                    "english": "Robotics;Notes"
-                                }
-                            }
-                        }
+                                    "english": "Robotics;Notes",
+                                },
+                            },
+                        },
                     ]
-                }
+                },
             }
         }
     },
-
     13599: {
         "data": {
             "media": {
                 "id": 13599,
-                "title": {
-                    "romaji": "Robotics;Notes",
-                    "english": "Robotics;Notes"
-                },
+                "title": {"romaji": "Robotics;Notes", "english": "Robotics;Notes"},
                 "relations": {
                     "edges": [
                         {
@@ -231,12 +218,12 @@ MOCK_RESPONSES = {
                                 "id": 3927,
                                 "title": {
                                     "romaji": "ChäoS;HEAd",
-                                    "english": "Chaos;Head"
-                                }
-                            }
+                                    "english": "Chaos;Head",
+                                },
+                            },
                         }
                     ]
-                }
+                },
             }
         }
     },

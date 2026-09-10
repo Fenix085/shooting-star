@@ -4,35 +4,40 @@ from collections import deque
 from ..common.ratelimiter import RateLimiter
 from .mockdata import MOCK_RESPONSES
 
-class AniListClient():
-    def __init__(self, mock = False) -> None:
+
+class AniListClient:
+    def __init__(self, mock=False) -> None:
         self.mock = mock
         self.url = "https://graphql.anilist.co"
         self.limiter = RateLimiter(min_interval=0.7)
         self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "shooting-star/0.1 (https://github.com/Fenix085/shooting-star)",
-            "Accept": "application/json",
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "shooting-star/0.1 (https://github.com/Fenix085/shooting-star)",
+                "Accept": "application/json",
+            }
+        )
 
     def _request(self, query, variables):
         self.limiter.wait()
         response = self.session.post(
-          self.url,
-          json={'query': query, 'variables': variables},
+            self.url,
+            json={"query": query, "variables": variables},
         )
         response.raise_for_status()
         data = response.json()
-        if data.get('errors'):
-          message = data['errors'][0].get('message', 'AniList request failed')
-          raise RuntimeError(f'AniList request failed ({response.status_code}): {message}')
-        
-        return data['data']
+        if data.get("errors"):
+            message = data["errors"][0].get("message", "AniList request failed")
+            raise RuntimeError(
+                f"AniList request failed ({response.status_code}): {message}"
+            )
 
-    def search(self, name, limit = 5):
+        return data["data"]
+
+    def search(self, name, limit=5):
         if self.mock:
             return self._mock_search(name, limit)
-        query = '''
+        query = """
         query ($name: String!, $limit: Int!) {
           Page(perPage: $limit) {
             media(search: $name, type: ANIME) {
@@ -44,18 +49,23 @@ class AniListClient():
             }
           }
         }
-        '''
+        """
 
         variables = {
-            'name': name,
-            'limit': limit,
+            "name": name,
+            "limit": limit,
         }
 
-
-        return self._request(query, variables)['Page']['media']
+        return self._request(query, variables)["Page"]["media"]
 
     def get_anime(self, aid):
-        query = '''
+        if self.mock:
+            resp = MOCK_RESPONSES.get(aid)
+            if resp is None:
+                raise RuntimeError(f"Mock: no data for id {aid}")
+            return resp["data"]["media"]
+
+        query = """
         query ($id: Int!) {
             media(id: $id) {
                 id
@@ -73,12 +83,10 @@ class AniListClient():
                 description
             }
         }
-        '''
-        variables = {
-            "id": aid
-        } 
+        """
+        variables = {"id": aid}
 
-        return self._request(query, variables)
+        return self._request(query, variables)["media"]
 
     def get_relations(self, aid):
         if self.mock:
@@ -86,8 +94,8 @@ class AniListClient():
             if resp is None:
                 raise RuntimeError(f"Mock: no data for id {aid}")
             return resp["data"]
-        
-        query = '''
+
+        query = """
         query ($id: Int!) {
             media(id: $id){
                 id
@@ -109,7 +117,7 @@ class AniListClient():
                 }
             }
         }
-        '''
+        """
 
         variables = {
             "id": aid,
@@ -151,6 +159,5 @@ class AniListClient():
         return [
             response["data"]["media"]
             for response in MOCK_RESPONSES.values()
-            if name.lower()
-            in response["data"]["media"]["title"]["romaji"].lower()
+            if name.lower() in response["data"]["media"]["title"]["romaji"].lower()
         ][:limit]
