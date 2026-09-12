@@ -39,15 +39,15 @@ class AniListClient:
             return self._mock_search(name, limit)
         query = """
         query ($name: String!, $limit: Int!) {
-          Page(perPage: $limit) {
-            Media(search: $name, type: ANIME) {
-              id
-              title {
-                romaji
-                english
-              }
+            Page(perPage: $limit) {
+                media(search: $name, type: ANIME) {
+                    id
+                    title {
+                        romaji
+                        english
+                    }
+                }
             }
-          }
         }
         """
 
@@ -56,7 +56,7 @@ class AniListClient:
             "limit": limit,
         }
 
-        return self._request(query, variables)["Page"]["Media"]
+        return self._request(query, variables)["Page"]["media"]
 
     def get_anime(self, aid):
         if self.mock:
@@ -109,6 +109,9 @@ class AniListClient:
                     romaji
                     english
                 }
+                format
+                episodes
+                seasonYear
                 relations {
                     edges {
                         relationType

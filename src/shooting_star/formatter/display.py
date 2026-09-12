@@ -26,7 +26,7 @@ class AnimeCard:
         table.add_column(max_width=48, justify="left")
         table.add_row(f"{self.title}")
         table.add_row(
-            f"{self.format} - {self.episodes} episodes · {self.year} · {self.status} · ★ {self.score}"
+            f"{self.format} - {self.episodes} episodes · {self.year} · {self.status} · ★ {self.score / 10:.1f}"
         )
         table.add_row(f"{self.description}")
         table.add_row(f"{self.genre}")
