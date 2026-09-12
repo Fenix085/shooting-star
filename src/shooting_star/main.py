@@ -18,9 +18,9 @@ class AnimeData(TypedDict):
 
 
 def main():
-    anilist = AniListClient(mock=True)
+    anilist = AniListClient(mock=False)
 
-    # response = anilist.search("Stein", 2)
+    # response = anilist.search("Gundam", 5)
     # print(response)
     # relations = anilist.get_relations(response[0]['id'])
     # print("-----------------")
@@ -28,8 +28,8 @@ def main():
     # print("-----------------")
     # graph = anilist.build_graph(response[0]["id"])
     # print(graph)
-
-    data = cast(AnimeData, anilist.get_anime(9253))
+    # id = response[0]['id']
+    data = cast(AnimeData, anilist.get_anime(21268))
     card = AnimeCard(
         title=data["title"]["english"],
         format=data["format"],

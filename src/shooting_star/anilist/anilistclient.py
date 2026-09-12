@@ -40,7 +40,7 @@ class AniListClient:
         query = """
         query ($name: String!, $limit: Int!) {
           Page(perPage: $limit) {
-            media(search: $name, type: ANIME) {
+            Media(search: $name, type: ANIME) {
               id
               title {
                 romaji
@@ -56,18 +56,18 @@ class AniListClient:
             "limit": limit,
         }
 
-        return self._request(query, variables)["Page"]["media"]
+        return self._request(query, variables)["Page"]["Media"]
 
     def get_anime(self, aid):
         if self.mock:
             resp = MOCK_RESPONSES.get(aid)
             if resp is None:
                 raise RuntimeError(f"Mock: no data for id {aid}")
-            return resp["data"]["media"]
+            return resp["data"]["Media"]
 
         query = """
         query ($id: Int!) {
-            media(id: $id) {
+            Media(id: $id) {
                 id
                 title {
                     romaji
@@ -81,12 +81,18 @@ class AniListClient:
                 averageScore
                 genres
                 description
+                studios {
+                    nodes {
+                        name
+                        isAnimationStudio
+                    }
+                }
             }
         }
         """
         variables = {"id": aid}
 
-        return self._request(query, variables)["media"]
+        return self._request(query, variables)["Media"]
 
     def get_relations(self, aid):
         if self.mock:
@@ -97,7 +103,7 @@ class AniListClient:
 
         query = """
         query ($id: Int!) {
-            media(id: $id){
+            Media(id: $id){
                 id
                 title {
                     romaji
@@ -136,7 +142,7 @@ class AniListClient:
                 continue
             visited.add(current)
 
-            data = self.get_relations(current)["media"]
+            data = self.get_relations(current)["Media"]
             edges = []
             for edge in data["relations"]["edges"]:
                 rel_type = edge["relationType"]
@@ -157,7 +163,7 @@ class AniListClient:
     def _mock_search(self, name, limit):
         """API is down, so here we go."""
         return [
-            response["data"]["media"]
+            response["data"]["Media"]
             for response in MOCK_RESPONSES.values()
-            if name.lower() in response["data"]["media"]["title"]["romaji"].lower()
+            if name.lower() in response["data"]["Media"]["title"]["romaji"].lower()
         ][:limit]
