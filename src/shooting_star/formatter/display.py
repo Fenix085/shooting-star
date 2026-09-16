@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from rich import box
 from rich.table import Table
 from rich.console import Console
+from io import StringIO
 
 
 @dataclass
@@ -36,3 +37,22 @@ class AnimeCard:
     def render(self):
         console = Console()
         console.print(self._build_card_body())
+
+WIDTH = 25
+LEFT = WIDTH//2
+RIGHT = WIDTH//2
+@dataclass
+class RelationCard:
+    title: str
+    format: str
+    episodes: int
+    year: int
+
+    def _build_card_body(self) -> list[str]:
+        title = self.title[:WIDTH]
+        line1 = "┌" + "─" * WIDTH + "┐"
+        line2 = "│" + f"{title:^{WIDTH}}" + "│"
+        line3 = "├" + "─" * LEFT + "┬" + "─" * RIGHT + "┤"
+        line4 = "│" + f"{self.format} - {self.episodes}".center(LEFT) + "│" + f"{self.year:^{RIGHT}}" + "│"
+        line5 = "└" + "─" * LEFT + "┴" + "─" * RIGHT + "┘"
+        return [line1, line2, line3, line4, line5]
