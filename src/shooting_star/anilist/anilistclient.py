@@ -1,5 +1,6 @@
 import requests
 from collections import deque
+import time
 
 from ..common.ratelimiter import RateLimiter
 from .mockdata import MOCK_RESPONSES
@@ -9,7 +10,7 @@ class AniListClient:
     def __init__(self, mock=False) -> None:
         self.mock = mock
         self.url = "https://graphql.anilist.co"
-        self.limiter = RateLimiter(min_interval=0.7)
+        self.limiter = RateLimiter(min_interval=1)
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -24,6 +25,16 @@ class AniListClient:
             self.url,
             json={"query": query, "variables": variables},
         )
+
+        remaining = int(response.headers.get("X-RateLimit-Remaining", 90))
+        if remaining < 5:
+            time.sleep(5)
+
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 60))
+            time.sleep(retry_after)
+            return self._request(query, variables)
+
         response.raise_for_status()
         data = response.json()
         if data.get("errors"):
@@ -121,6 +132,9 @@ class AniListClient:
                                 romaji
                                 english
                             }
+                            format
+                            episodes
+                            seasonYear
                         }
                     }
                 }
@@ -134,34 +148,37 @@ class AniListClient:
 
         return self._request(query, variables)
 
-    def build_graph(self, aid):
-        graph = {}
-        q = deque([aid])
-        visited = set()
-        while q:
-            current = q.popleft()
+    def get_main_line(self, graph, start_id):
+        pass
 
-            if current in visited:
-                continue
-            visited.add(current)
+    # def build_graph(self, aid):
+    #     graph = {}
+    #     q = deque([aid])
+    #     visited = set()
+    #     while q:
+    #         current = q.popleft()
 
-            data = self.get_relations(current)["Media"]
-            edges = []
-            for edge in data["relations"]["edges"]:
-                rel_type = edge["relationType"]
-                neighbor = edge["node"]
-                nid = neighbor["id"]
+    #         if current in visited:
+    #             continue
+    #         visited.add(current)
 
-                edges.append((rel_type, nid))
+    #         data = self.get_relations(current)["Media"]
+    #         edges = []
+    #         for edge in data["relations"]["edges"]:
+    #             rel_type = edge["relationType"]
+    #             neighbor = edge["node"]
+    #             nid = neighbor["id"]
 
-                if nid not in visited:
-                    q.append(nid)
+    #             edges.append((rel_type, nid))
 
-            graph[current] = {
-                "title": data["title"],
-                "edges": edges,
-            }
-        return graph
+    #             if nid not in visited:
+    #                 q.append(nid)
+
+    #         graph[current] = {
+    #             "title": data["title"],
+    #             "edges": edges,
+    #         }
+    #     return graph
 
     def _mock_search(self, name, limit):
         """API is down, so here we go."""

@@ -1,7 +1,7 @@
 from typing import TypedDict, cast
 
 # from shooting_star.anidb import AniDBClient
-from shooting_star.anilist import AniListClient
+from shooting_star.anilist import AniListClient, RelationGraph
 from shooting_star.formatter import AnimeCard
 
 
@@ -21,7 +21,7 @@ def main():
     response = []
     while True:
         anilist = AniListClient(mock=False)
-        print("Wha do you want")
+        print("What do you want")
         print("[1] Search by title")
         print("[2] Get an info card (id needed)")
         print("[3] Get relations (id needed)")
@@ -66,6 +66,12 @@ def main():
                 pass
             case "q":
                 break
+            case "t":
+                gr = RelationGraph(anilist)
+                gr.load_initial(80)
+                print(gr.nodes)
+                print("----------------------")
+                print(gr.edges)
             case _:
                 pass
 
