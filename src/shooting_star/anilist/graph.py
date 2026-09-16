@@ -19,28 +19,26 @@ class RelationGraph():
         self._expand_around(node_id)
 
     def _expand_around(self, start_id: int):
-        m_start_id = start_id
-
-        main_nodes = [start_id]
 
         self._fetch_and_merge(start_id)
 
         for r_type in MAIN_LINE_TYPES:
-            m_start_id = start_id
+            current_level = [start_id]
             for _ in range(MAIN_LINE_DEPTH):
-                seq = self._find_next(m_start_id, r_type)
-                if seq is not None:
-                    self._fetch_and_merge(seq)
-                    m_start_id = seq
-                else: 
-                    break
-                main_nodes.append(m_start_id)  
+                new_level = []
+                for entry in current_level:
+                    self._fetch_and_merge(entry)
+                    new_level.extend(self._find_next(entry, r_type))
+                current_level = new_level    
+
     
             
-    def _find_next(self, start_id: int, r_type: str) -> int|None:
+    def _find_next(self, start_id: int, r_type: str) -> list[int]:
+        found = []
         for edge in self.edges:
             if edge[0] == start_id and edge[2] == r_type:
-                return edge[1]
+                found.append(edge[1])
+        return found
             
 
     def _fetch_and_merge(self, node_id: int) -> None:
