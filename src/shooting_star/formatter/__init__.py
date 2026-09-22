@@ -1,2 +1,2 @@
-from .display import AnimeCard
-from .display import RelationCard
+from .display import AnimeCard, RelationCard, render_graph
+

@@ -2,7 +2,7 @@ from typing import TypedDict, cast
 
 # from shooting_star.anidb import AniDBClient
 from shooting_star.anilist import AniListClient, RelationGraph
-from shooting_star.formatter import AnimeCard, RelationCard
+from shooting_star.formatter import AnimeCard, RelationCard, render_graph
 
 
 class AnimeData(TypedDict):
@@ -67,15 +67,11 @@ def main():
             case "q":
                 break
             case "t":
-                r_card = RelationCard(
-                    title="Some Name",
-                    format="Movie",
-                    episodes=59,
-                    year=2222,
-                )
+                gr = RelationGraph(anilist)
+                gr.load_initial(80)
+                adj = gr.build_adjacency("SEQUEL")
+                render_graph(gr.nodes, adj, gr.current)
 
-                for line in r_card._build_card_body():
-                    print(line)
             case _:
                 pass
 

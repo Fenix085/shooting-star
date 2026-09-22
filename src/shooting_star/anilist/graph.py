@@ -80,6 +80,16 @@ class RelationGraph():
                     "expanded": False,
                 }
             )
+
+    def build_adjacency(self, r_type) -> dict[int, list[int]]:
+        result = {}
+        for edge in self.edges:
+            if edge[2]==r_type:
+                result.setdefault(edge[0], [])
+                result[edge[0]].append(edge[1])
+                result.setdefault(edge[1], [])
+
+        return result
         
 
     def frontier(self) -> list[int]:
