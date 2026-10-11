@@ -1,5 +1,3 @@
-
-
 def decide_columns(
     topo_order: list[int],
     adj: dict[int, list[int]],

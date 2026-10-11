@@ -29,22 +29,26 @@ def main():
         user_input = input("> ")
 
         match user_input:
-            case "1": #search
+            case "1":  # search
                 input_title = input("Enter title: ")
-                input_amount = input("Enter max amount of responses (default = 5): ").strip()
+                input_amount = input(
+                    "Enter max amount of responses (default = 5): "
+                ).strip()
                 if input_amount == "":
                     response = anilist.search(input_title)
-                else: 
+                else:
                     response = anilist.search(input_title, int(input_amount))
 
                 print(response)
 
-            case "2": #anime card
-                input_anime_id = input("Enter id (leave empty if the first response is what you are looking for): ").strip()
+            case "2":  # anime card
+                input_anime_id = input(
+                    "Enter id (leave empty if the first response is what you are looking for): "
+                ).strip()
                 if input_anime_id != "":
                     anime_id = int(input_anime_id)
                 elif response:
-                    anime_id = response[0]['id']
+                    anime_id = response[0]["id"]
                 else:
                     print("Seach for an anime first or provide an ID")
                     continue
@@ -62,12 +66,14 @@ def main():
                     description=data["description"],
                 )
                 card.render()
-            case "3": #relations
-                input_anime_id = input("Enter id (leave empty if the first response is what you are looking for): ").strip()
+            case "3":  # relations
+                input_anime_id = input(
+                    "Enter id (leave empty if the first response is what you are looking for): "
+                ).strip()
                 if input_anime_id != "":
                     anime_id = int(input_anime_id)
                 elif response:
-                    anime_id = response[0]['id']
+                    anime_id = response[0]["id"]
                 else:
                     print("Seach for an anime first or provide an ID")
                     continue

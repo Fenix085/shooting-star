@@ -41,9 +41,12 @@ class AnimeCard:
         console = Console()
         console.print(self._build_card_body())
 
+
 CARD_WIDTH = 35
 LEFT = (CARD_WIDTH - 1) // 2
 RIGHT = CARD_WIDTH // 2
+
+
 @dataclass
 class RelationCard:
     id: int
@@ -60,17 +63,26 @@ class RelationCard:
         line1 = "┌" + "─" * CARD_WIDTH + "┐"
         line2 = "│" + f"{title:^{CARD_WIDTH}}" + "│"
         line3 = "├" + "─" * LEFT + "┬" + "─" * RIGHT + "┤"
-        line4 = ("│" + f"{self.format} - {self.episodes}".center(LEFT) + "│" + f"{year:^{RIGHT}}" + "│")
+        line4 = (
+            "│"
+            + f"{self.format} - {self.episodes}".center(LEFT)
+            + "│"
+            + f"{year:^{RIGHT}}"
+            + "│"
+        )
         line5 = "├" + "─" * LEFT + "┴" + "─" * RIGHT + "┤"
         line6 = "│" + f"{label:^{CARD_WIDTH}}" + "│"
         line7 = "└" + "─" * CARD_WIDTH + "┘"
 
         return [line1, line2, line3, line4, line5, line6, line7]
 
+
 COLUMN_WIDTH = CARD_WIDTH + 4
 
 
-def _find_last_nodes_by_column(topo_sorted: list[int], columns: dict[int, int]) -> dict[int, int]:
+def _find_last_nodes_by_column(
+    topo_sorted: list[int], columns: dict[int, int]
+) -> dict[int, int]:
     return {columns[node]: node for node in topo_sorted}
 
 
@@ -80,7 +92,9 @@ def _build_column_segment(active: bool) -> str:
     return " " * COLUMN_WIDTH
 
 
-def _build_fork_row(parent_col: int, child_cols: list[int], active: set[int], to_the_right: bool = True) -> str:
+def _build_fork_row(
+    parent_col: int, child_cols: list[int], active: set[int], to_the_right: bool = True
+) -> str:
     if not child_cols:
         return ""
 
@@ -88,7 +102,7 @@ def _build_fork_row(parent_col: int, child_cols: list[int], active: set[int], to
     last_col = max(parent_col, child_cols[-1])
     fork_columns = set(child_cols)
     row = []
-    
+
     for column in range(last_col + 1):
         if to_the_right:
             if column < parent_col:
@@ -130,8 +144,7 @@ def _build_fork_row(parent_col: int, child_cols: list[int], active: set[int], to
 
 def _build_prefix(column: int, active_columns: set[int]) -> str:
     return "".join(
-        _build_column_segment(index in active_columns)
-        for index in range(column)
+        _build_column_segment(index in active_columns) for index in range(column)
     )
 
 
@@ -213,8 +226,10 @@ def render_graph(nodes: dict, adj: dict, current: int | None) -> None:
                 parent_cols.append(columns[parent])
 
         if parent_cols:
-            print(_build_fork_row(column, parent_cols, active_columns, to_the_right=False))
-        
+            print(
+                _build_fork_row(column, parent_cols, active_columns, to_the_right=False)
+            )
+
         _render_node(node, nodes, adj, columns, active_columns)
 
         child_cols = []
@@ -224,7 +239,6 @@ def render_graph(nodes: dict, adj: dict, current: int | None) -> None:
 
         if child_cols:
             print(_build_fork_row(column, child_cols, active_columns))
-
 
         if last_in_column[column] != node:
             print(_build_connector(active_columns))

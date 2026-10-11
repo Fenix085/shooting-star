@@ -1,9 +1,17 @@
 MAIN_LINE_TYPES = {"SEQUEL", "PREQUEL"}
-IGNORE_TYPES = {"CHARACTER","OTHER", "ADAPTATION", "COMPILATION", "CONTAINS", "SAME_UNIVERSE"}
+IGNORE_TYPES = {
+    "CHARACTER",
+    "OTHER",
+    "ADAPTATION",
+    "COMPILATION",
+    "CONTAINS",
+    "SAME_UNIVERSE",
+}
 MAIN_LINE_DEPTH = 3
 # BRANCH_DEPTH = 1
 
-class RelationGraph():
+
+class RelationGraph:
     def __init__(self, client) -> None:
         self.client = client
         self.nodes: dict = {}
@@ -29,17 +37,14 @@ class RelationGraph():
                 for entry in current_level:
                     self._fetch_and_merge(entry)
                     new_level.extend(self._find_next(entry, r_type))
-                current_level = new_level    
+                current_level = new_level
 
-    
-            
     def _find_next(self, start_id: int, r_type: str) -> list[int]:
         found = []
         for edge in self.edges:
             if edge[0] == start_id and edge[2] == r_type:
                 found.append(edge[1])
         return found
-            
 
     def _fetch_and_merge(self, node_id: int) -> None:
         if node_id in self.nodes:
@@ -48,7 +53,7 @@ class RelationGraph():
 
         relations = self.client.get_relations(node_id)
         media = relations["Media"]
-    
+
         self.nodes.setdefault(
             node_id,
             {
@@ -58,7 +63,7 @@ class RelationGraph():
                 "episodes": media["episodes"],
                 "year": media["seasonYear"],
                 "expanded": False,
-            }
+            },
         )
 
         self.nodes[node_id]["expanded"] = True
@@ -78,19 +83,18 @@ class RelationGraph():
                     "episodes": e_node["episodes"],
                     "year": e_node["seasonYear"],
                     "expanded": False,
-                }
+                },
             )
 
     def build_adjacency(self, r_type) -> dict[int, list[int]]:
         result = {}
         for edge in self.edges:
-            if edge[2]==r_type:
+            if edge[2] == r_type:
                 result.setdefault(edge[0], [])
                 result[edge[0]].append(edge[1])
                 result.setdefault(edge[1], [])
 
         return result
-        
 
     def frontier(self) -> list[int]:
         not_expanded = []
@@ -98,4 +102,3 @@ class RelationGraph():
             if node["expanded"] == False:
                 not_expanded.append(node["id"])
         return not_expanded
-

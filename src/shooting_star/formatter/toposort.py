@@ -1,13 +1,14 @@
-#Thank you, Chirag Agarwal from GeeksforGeeks for explaining Kahn's algorithm
+# Thank you, Chirag Agarwal from GeeksforGeeks for explaining Kahn's algorithm
 
 from collections import deque
+
 
 def topoSort(adj: dict[int, list[int]]) -> list[int]:
 
     indegree = {}
     for key, _ in adj.items():
         indegree[key] = 0
-    
+
     order = []
     queue = deque()
 
