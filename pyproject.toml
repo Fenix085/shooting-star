@@ -1,14 +1,17 @@
 [project]
 name = "shooting-star"
 version = "0.1.0"
-description = "Add your description here"
+description = "CLI tool to search information about anime (description, genre, episodes, relations, etc.)"
 readme = "README.md"
 authors = [
     { name = "Fenix085", email = "vladimirhurtovyi@gmail.com" }
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "pycryptodome>=3.24.0",
+    "python-dotenv>=1.2.4",
     "requests>=2.32.0",
+    "rich>=15.0.0",
 ]
 
 [project.scripts]
