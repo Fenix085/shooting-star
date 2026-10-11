@@ -63,14 +63,21 @@ def main():
                 )
                 card.render()
             case "3": #relations
-                pass
-            case "q":
-                break
-            case "t":
+                input_anime_id = input("Enter id (leave empty if the first response is what you are looking for): ").strip()
+                if input_anime_id != "":
+                    anime_id = int(input_anime_id)
+                elif response:
+                    anime_id = response[0]['id']
+                else:
+                    print("Seach for an anime first or provide an ID")
+                    continue
                 gr = RelationGraph(anilist)
-                gr.load_initial(80)
+                gr.load_initial(anime_id)
                 adj = gr.build_adjacency("SEQUEL")
                 render_graph(gr.nodes, adj, gr.current)
+
+            case "q":
+                break
 
             case _:
                 pass
